@@ -62,6 +62,7 @@ static void enter_display_setup_event_cb( lv_obj_t * obj, lv_event_t event );
 static void exit_display_setup_event_cb( lv_obj_t * obj, lv_event_t event );
 static void down_display_setup_event_cb( lv_obj_t * obj, lv_event_t event );
 static void up_display_setup_event_cb( lv_obj_t * obj, lv_event_t event );
+bool display_displayctl_brightness_event_cb( EventBits_t event, void *arg );
 static void display_brightness_setup_event_cb( lv_obj_t * obj, lv_event_t event );
 static void display_timeout_setup_event_cb( lv_obj_t * obj, lv_event_t event );
 static void display_rotation_event_handler(lv_obj_t * obj, lv_event_t event);
@@ -71,7 +72,7 @@ static void display_background_image_setup_event_cb( lv_obj_t * obj, lv_event_t 
 
 void display_settings_tile_setup( void ) {
     // get an app tile and copy mainstyle
-    display_tile_num_1 = mainbar_add_app_tile( 1, 2 );
+    display_tile_num_1 = mainbar_add_app_tile( 1, 2, "display settings" );
     display_tile_num_2 = display_tile_num_1 + 1;
     display_settings_tile_1 = mainbar_get_tile_obj( display_tile_num_1 );
     display_settings_tile_2 = mainbar_get_tile_obj( display_tile_num_2 );
@@ -244,6 +245,20 @@ void display_settings_tile_setup( void ) {
     lv_tileview_add_element( display_settings_tile_2, vibe_cont );
     lv_tileview_add_element( display_settings_tile_2, block_return_maintile_cont );
     lv_tileview_add_element( display_settings_tile_2, display_background_image_cont );
+
+    display_register_cb( DISPLAYCTL_BRIGHTNESS, display_displayctl_brightness_event_cb, "display settings" );
+}
+
+bool display_displayctl_brightness_event_cb( EventBits_t event, void *arg ) {
+    switch( event ) {
+        case DISPLAYCTL_BRIGHTNESS:
+            lv_slider_set_value( display_brightness_slider, display_get_brightness() , LV_ANIM_OFF );
+            break;
+        case DISPLAYCTL_TIMEOUT:
+            lv_slider_set_value( display_timeout_slider, display_get_timeout() , LV_ANIM_OFF );
+            break;
+    }
+    return( true );
 }
 
 static void enter_display_setup_event_cb( lv_obj_t * obj, lv_event_t event ) {

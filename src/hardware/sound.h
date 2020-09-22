@@ -23,28 +23,18 @@
     #define _SOUND_H
 
     #include "TTGO.h"
+    #include "callback.h"
+
+    #define SOUNDCTL_ENABLED           _BV(0)
+    #define SOUNDCTL_VOLUME            _BV(1)
 
     #define SOUND_JSON_CONFIG_FILE    "/sound.json"
 
     typedef struct {
-        bool enable = true;
         uint8_t volume = 50;
+        bool enable = true;
     } sound_config_t;
 
-    /**
-    * @brief put sound output to standby (disable)
-    */
-    void sound_standby( void );
-    /**
-    * @brief wakeup sound output
-    */
-    void sound_wakeup( void );
-    /**
-     * @brief enable or disable the power output for AXP202_LDO3
-     * 
-     * @param enable = true sets the AXP202_LDO3 power output to high false to low
-     */
-    void sound_set_enabled( bool enabled = true );
     /**
      * @brief play mp3 file from SPIFFS by path/filename
      * 
@@ -62,19 +52,32 @@
     void sound_play_progmem_wav( const void *data, uint32_t len );
     /**
      * @brief setup sound
-     * 
      */
     void sound_setup( void );
+    /**
+     * @brief put sound output to standby (disable)
+     */
+    void sound_standby( void );
+    /**
+     * @brief wakeup sound output
+     */
+    void sound_wakeup( void );
+    /**
+     * @brief enable or disable the power output for AXP202_LDO3
+     * 
+     * @param enable = true sets the AXP202_LDO3 power output to high false to low
+     */
+    void sound_set_enabled( bool enabled = true );
+    /**
+     * @brief sound loop
+     */
+    void sound_loop( void );
     /**
      * @brief speak
      *  
      * @param   str    the text to be spoken
      */
     void sound_speak( const char *str );
-    /**
-     * @brief sound loop
-     */
-    void sound_loop( void );
     /**
      * @brief save config for sound to spiffs
      */
@@ -107,6 +110,16 @@
      * @param volume from 0-100
      */
     void sound_set_volume_config( uint8_t volume );
+    /**
+     * @brief registers a callback function which is called on a corresponding event
+     * 
+     * @param   event           possible values: SOUNDCTL_ENABLED, SOUNDCTL_VOLUME
+     * @param   callback_func    pointer to the callback function 
+     * @param   id              programm id
+     * 
+     * @return  true if success, false if failed
+     */
+    bool sound_register_cb( EventBits_t event, CALLBACK_FUNC callback_func, const char *id );
 
 
 

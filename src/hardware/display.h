@@ -22,6 +22,11 @@
 #ifndef _DISPLAY_H
     #define _DISPLAY_H
 
+    #include "callback.h"
+
+    #define DISPLAYCTL_BRIGHTNESS       _BV(0)
+    #define DISPLAYCTL_TIMEOUT          _BV(1)
+    
     #define DISPLAY_MIN_TIMEOUT         15
     #define DISPLAY_MAX_TIMEOUT         300
 
@@ -36,7 +41,7 @@
         uint32_t timeout = DISPLAY_MIN_TIMEOUT;
         uint32_t rotation = 0;
         bool block_return_maintile = false;
-        uint32_t background_image = 0;
+        uint32_t background_image = 2;
     } display_config_t;
 
     #define DISPLAY_CONFIG_FILE         "/display.cfg"
@@ -113,7 +118,7 @@
     /**
      * @brief get the background for the display
      * 
-     * return image number
+     * @return image number
      */
     uint32_t display_get_background_image( void );
     /**
@@ -130,6 +135,16 @@
      * @brief set display into normal mode or leave it in standby if a silence wakeup occur
      */
     void display_wakeup( bool silence );
+    /**
+     * @brief registers a callback function which is called on a corresponding event
+     * 
+     * @param   event           possible values: DISPLAYCTL_BRIGHTNESS and DISPLAYCTL_TIMEOUT
+     * @param   callback_func   pointer to the callback function
+     * @param   id              program id
+     * 
+     * @return  true if success, false if failed
+     */
+    bool display_register_cb( EventBits_t event, CALLBACK_FUNC callback_func, const char *id );
 
 
 #endif // _DISPLAY_H
